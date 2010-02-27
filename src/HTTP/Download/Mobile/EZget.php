@@ -34,6 +34,8 @@ class HTTP_Download_Mobile_EZget
     public function setFilename($filename)
     {
         $this->filename = $filename;
+
+        return $this;
     }
 
     /**
@@ -42,6 +44,8 @@ class HTTP_Download_Mobile_EZget
     public function setOffset($offset)
     {
         $this->offset = $offset;
+
+        return $this;
     }
 
     /**
@@ -50,6 +54,8 @@ class HTTP_Download_Mobile_EZget
     public function setCount($count)
     {
         $this->count = $count;
+
+        return $this;
     }
 
     /**
