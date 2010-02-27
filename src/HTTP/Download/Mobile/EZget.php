@@ -176,16 +176,16 @@ class HTTP_Download_Mobile_EZget
     /**
      * 終了時のメッセージを取得する
      */
-    public function getResponseMessage($response)
+    public function getResponseMessage($response_type)
     {
-        return $this->messages[$response];
+        return $this->messages[$response_type];
     }
 
     /**
      * 終了時のメッセージを設定する
      */
-    public function setResponseMessage($response, $message)
+    public function setResponseMessage($response_type, $message)
     {
-        return $this->messages[$response] = $message;
+        return $this->messages[$response_type] = $message;
     }
 }
