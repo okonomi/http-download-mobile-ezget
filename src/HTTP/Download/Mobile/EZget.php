@@ -67,21 +67,15 @@ class HTTP_Download_Mobile_EZget
     /**
      * レスポンスを取得
      */
-    public function getDownload()
+    public function getResponse()
     {
-        foreach (array('name', 'offset', 'count') as $param) {
-            if (empty($this->$param) && array_key_exists($param, $_REQUEST)) {
-                $this->$param = $_REQUEST[$param];
-            }
-        }
-
+        $content_type  = '';
+        $response_body = '';
 
         // 出力の種類を判別
-        $response = $this->getResponseType($this->offset, $this->count, $this->path.'/'.$this->name);
+        $response_type = $this->getResponseType($this->offset, $this->count, $this->path.'/'.$this->name);
 
-        // 出力内容を設定
-        $download = new HTTP_Download();
-        if ($response == HTTP_Download_Mobile_EZget::RESPONSE_DOWNLOADING) {
+        if ($response_type == HTTP_Download_Mobile_EZget::RESPONSE_DOWNLOADING) {
             $body = '';
             $filename = $this->path.'/'.$this->name;
             if ($fp = fopen($filename, 'rb')) {
@@ -90,13 +84,13 @@ class HTTP_Download_Mobile_EZget
                 fclose($fp);
             }
 
-            $download->setContentType('application/x-up-download');
-            $download->setData($body);
-        } elseif ($response == HTTP_Download_Mobile_EZget::RESPONSE_DOWNLOADEMPTY) {
-            $download->setContentType('application/x-up-download');
-            $download->setData('');
+            $content_type  = 'application/x-up-download';
+            $response_body = $body;
+        } elseif ($response_type == HTTP_Download_Mobile_EZget::RESPONSE_DOWNLOADEMPTY) {
+            $content_type  = 'application/x-up-download';
+            $response_body = '';
         } else {
-            if ($response == HTTP_Download_Mobile_EZget::RESPONSE_COMPLETED) {
+            if ($response_type == HTTP_Download_Mobile_EZget::RESPONSE_COMPLETED) {
                 $task = 'return';
             } else {
                 $task = 'cancel';
@@ -112,13 +106,12 @@ class HTTP_Download_Mobile_EZget
                             $task, $msg);
             $body = mb_convert_encoding($body, 'SJIS', 'UTF-8');
 
-            $download->setContentType('text/x-hdml;charset=Shift_JIS');
-            $download->setData($body);
+            $content_type  = 'text/x-hdml;charset=Shift_JIS';
+            $response_body = $body;
         }
 
-        $download->setCache(false);
 
-        return $download;
+        return array($content_type, $response_body);
     }
 
     /**
