@@ -24,7 +24,7 @@ class HTTP_Download_Mobile_EZget
 
     protected $count;
 
-    protected $message;
+    protected $messages;
 
 
     function __construct()
@@ -163,7 +163,7 @@ class HTTP_Download_Mobile_EZget
         $this->offset = 0;
         $this->count  = 0;
 
-        $this->message = array(
+        $this->messages = array(
             HTTP_Download_Mobile_EZget::RESPONSE_UNKNOWN       => 'エラーが発生しました',
             HTTP_Download_Mobile_EZget::RESPONSE_DOWNLOADING   => null,
             HTTP_Download_Mobile_EZget::RESPONSE_DOWNLOADEMPTY => null,
@@ -178,7 +178,7 @@ class HTTP_Download_Mobile_EZget
      */
     public function getResponseMessage($response)
     {
-        return $this->message[$response];
+        return $this->messages[$response];
     }
 
     /**
@@ -186,6 +186,6 @@ class HTTP_Download_Mobile_EZget
      */
     public function setResponseMessage($response, $message)
     {
-        return $this->message[$response] = $message;
+        return $this->messages[$response] = $message;
     }
 }
