@@ -155,7 +155,7 @@ class HTTP_Download_Mobile_EZget
     }
 
     /**
-     * 終了時のメッセージを取得する
+     * レスポンスメッセージを取得する
      */
     public function getResponseMessage($response_type)
     {
@@ -163,7 +163,7 @@ class HTTP_Download_Mobile_EZget
     }
 
     /**
-     * 終了時のメッセージを設定する
+     * レスポンスメッセージを設定する
      */
     public function setResponseMessage($response_type, $message)
     {
