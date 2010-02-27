@@ -100,7 +100,10 @@ class HTTP_Download_Mobile_EZget
         }
 
 
-        return array($content_type, $response_body);
+        return array(
+            'content-type' => $content_type,
+            'body'         => $response_body,
+        );
     }
 
     /**
