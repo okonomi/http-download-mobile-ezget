@@ -56,6 +56,28 @@ class HTTP_Download_Mobile_EZgetTestCase extends PHPUnit_Framework_TestCase
         $this->assertEquals($actual, $expect);
     }
 
+    public function testGetResponseMessage()
+    {
+        $ezget = new HTTP_Download_Mobile_EZget();
+
+        $messages = array(
+            HTTP_Download_Mobile_EZget::RESPONSE_UNKNOWN       => '1',
+            HTTP_Download_Mobile_EZget::RESPONSE_DOWNLOADING   => '2',
+            HTTP_Download_Mobile_EZget::RESPONSE_DOWNLOADEMPTY => '3',
+            HTTP_Download_Mobile_EZget::RESPONSE_COMPLETED     => '4',
+            HTTP_Download_Mobile_EZget::RESPONSE_FAILED        => '5',
+            HTTP_Download_Mobile_EZget::RESPONSE_FILENOTFOUND  => '6',
+        );
+        foreach ($messages as $response_type => $message) {
+            $ezget->setResponseMessage($response_type, $message);
+        }
+
+        foreach ($messages as $response_type => $expect) {
+            $actual = $ezget->getResponseMessage($response_type);
+            $this->assertEquals($actual,$expect);
+        }
+    }
+
     public function _testBaseic()
     {
         try {
