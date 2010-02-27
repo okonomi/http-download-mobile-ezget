@@ -14,6 +14,6 @@ $response = $ezget->setFilename(isset($_REQUEST['name']) ? $_REQUEST['name'] : n
 
 $download = new HTTP_Download();
 $download->setContentType($response['content-type']);
-$download->setBody($response['body']);
+$download->setData($response['body']);
 $download->setCache(false);
 $download->send();
