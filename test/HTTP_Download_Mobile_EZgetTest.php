@@ -9,7 +9,7 @@ require_once 'MIME/Type.php';
 
 class HTTP_Download_Mobile_EZgetTestCase extends PHPUnit_Framework_TestCase
 {
-    function testBaseic()
+    public function testBaseic()
     {
         try {
             $url = new Net_URL2('http://localhost/unittest/http_download_mobile_ezget/send.php');
