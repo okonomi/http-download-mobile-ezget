@@ -1,7 +1,5 @@
 <?php
 
-require_once 'HTTP/Download.php';
-
 
 /**
  * @see http://www.au.kddi.com/ezfactory/tec/dlcgi/download_1.html
@@ -128,14 +126,6 @@ class HTTP_Download_Mobile_EZget
         }
 
         return $response_type;
-    }
-
-    /**
-     * レスポンスの出力
-     */
-    public function send()
-    {
-        return $this->getDownload()->send(false);
     }
 
     /**
