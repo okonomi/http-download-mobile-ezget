@@ -77,7 +77,7 @@ class HTTP_Download_Mobile_EZget
 
 
         // 出力の種類を判別
-        $response = $this->_getReponseType();
+        $response = $this->getResponseType($this->offset, $this->count, $this->path.'/'.$this->name);
 
         // 出力内容を設定
         $download = new HTTP_Download();
@@ -124,26 +124,25 @@ class HTTP_Download_Mobile_EZget
     /**
      * レスポンスの種類を判別
      */
-    protected function _getReponseType()
+    public function getResponseType($offset, $count, $filename)
     {
-        if ($this->offset >= 0 && $this->count > 0) {
-            $filename = $this->path.'/'.$this->name;
+        if ($offset >= 0 && $count > 0) {
             if (file_exists($filename)) {
-                $response = HTTP_Download_Mobile_EZget::RESPONSE_DOWNLOADING;
+                $response_type = HTTP_Download_Mobile_EZget::RESPONSE_DOWNLOADING;
             } else {
-                $response = HTTP_Download_Mobile_EZget::RESPONSE_FILENOTFOUND;
+                $response_type = HTTP_Download_Mobile_EZget::RESPONSE_FILENOTFOUND;
             }
-        } elseif ($this->offset == 0 && $this->count == 0) {
-            $response = HTTP_Download_Mobile_EZget::RESPONSE_DOWNLOADEMPTY;
-        } elseif ($this->offset == -1 && $this->count == -1) {
-            $response = HTTP_Download_Mobile_EZget::RESPONSE_COMPLETED;
-        } elseif ($this->offset == -1 && $this->count == -2) {
-            $response = HTTP_Download_Mobile_EZget::RESPONSE_FAILED;
+        } elseif ($offset == 0 && $count == 0) {
+            $response_type = HTTP_Download_Mobile_EZget::RESPONSE_DOWNLOADEMPTY;
+        } elseif ($offset == -1 && $count == -1) {
+            $response_type = HTTP_Download_Mobile_EZget::RESPONSE_COMPLETED;
+        } elseif ($offset == -1 && $count == -2) {
+            $response_type = HTTP_Download_Mobile_EZget::RESPONSE_FAILED;
         } else {
-            $response = HTTP_Download_Mobile_EZget::RESPONSE_UNKNOWN;
+            $response_type = HTTP_Download_Mobile_EZget::RESPONSE_UNKNOWN;
         }
 
-        return $response;
+        return $response_type;
     }
 
     /**

@@ -9,7 +9,54 @@ require_once 'MIME/Type.php';
 
 class HTTP_Download_Mobile_EZgetTestCase extends PHPUnit_Framework_TestCase
 {
-    public function testBaseic()
+    public function testGetResponseType()
+    {
+        $ezget = new HTTP_Download_Mobile_EZget();
+
+        $offset   = 0;
+        $count    = 128;
+        $filename = HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/picture.jpg';
+        $actual   = $ezget->getResponseType($offset, $count, $filename);
+        $expect   = HTTP_Download_Mobile_EZget::RESPONSE_DOWNLOADING;
+        $this->assertEquals($actual, $expect);
+
+        $offset   = 0;
+        $count    = 128;
+        $filename = HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/dummy.jpg';
+        $actual   = $ezget->getResponseType($offset, $count, $filename);
+        $expect   = HTTP_Download_Mobile_EZget::RESPONSE_FILENOTFOUND;
+        $this->assertEquals($actual, $expect);
+
+        $offset   = 0;
+        $count    = 0;
+        $filename = HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/picture.jpg';
+        $actual   = $ezget->getResponseType($offset, $count, $filename);
+        $expect   = HTTP_Download_Mobile_EZget::RESPONSE_DOWNLOADEMPTY;
+        $this->assertEquals($actual, $expect);
+
+        $offset   = -1;
+        $count    = -1;
+        $filename = HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/picture.jpg';
+        $actual   = $ezget->getResponseType($offset, $count, $filename);
+        $expect   = HTTP_Download_Mobile_EZget::RESPONSE_COMPLETED;
+        $this->assertEquals($actual, $expect);
+
+        $offset   = -1;
+        $count    = -2;
+        $filename = HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/picture.jpg';
+        $actual   = $ezget->getResponseType($offset, $count, $filename);
+        $expect   = HTTP_Download_Mobile_EZget::RESPONSE_FAILED;
+        $this->assertEquals($actual, $expect);
+
+        $offset   = -2;
+        $count    = -2;
+        $filename = HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/picture.jpg';
+        $actual   = $ezget->getResponseType($offset, $count, $filename);
+        $expect   = HTTP_Download_Mobile_EZget::RESPONSE_UNKNOWN;
+        $this->assertEquals($actual, $expect);
+    }
+
+    public function _testBaseic()
     {
         try {
             $url = new Net_URL2('http://localhost/unittest/http_download_mobile_ezget/send.php');
