@@ -89,7 +89,7 @@ class HTTP_Download_Mobile_EZget
                 $task = 'cancel';
             }
 
-            $msg = $this->getResponseMessage($response);
+            $msg = $this->getResponseMessage($response_type);
             $body = sprintf('<hdml version=3.0 ttl="0" public=true>'."\n".
                             '<display>'."\n".
                             '<action type=accept task=%s>'."\n".
