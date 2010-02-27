@@ -7,7 +7,7 @@ require_once 'HTTP/Download.php';
 
 $ezget = new HTTP_Download_Mobile_EZget();
 
-$response = $ezget->setFilename(isset($_REQUEST['name']) ? $_REQUEST['name'] : null)
+$response = $ezget->setFilename(isset($_REQUEST['name']) ? HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/'.$_REQUEST['name'] : null)
                   ->setOffset(isset($_REQUEST['offset']) ? $_REQUEST['offset'] : null)
                   ->setCount(isset($_REQUEST['count']) ? $_REQUEST['count'] : null)
                   ->getResponse();

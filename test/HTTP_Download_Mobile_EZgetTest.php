@@ -57,9 +57,27 @@ class HTTP_Download_Mobile_EZgetTestCase extends PHPUnit_Framework_TestCase
                 'response' => HTTP_Download_Mobile_EZget::RESPONSE_UNKNOWN,
             ),
             array(
+                'filename' => 'dummy.jpg',
+                'offset'   => null,
+                'count'    => null,
+                'response' => HTTP_Download_Mobile_EZget::RESPONSE_UNKNOWN,
+            ),
+            array(
                 'filename' => HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/picture.jpg',
                 'offset'   => '0',
                 'count'    => '0',
+                'response' => HTTP_Download_Mobile_EZget::RESPONSE_UNKNOWN,
+            ),
+            array(
+                'filename' => HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/picture.jpg',
+                'offset'   => '0',
+                'count'    => '120',
+                'response' => HTTP_Download_Mobile_EZget::RESPONSE_UNKNOWN,
+            ),
+            array(
+                'filename' => HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/picture.jpg',
+                'offset'   => 0,
+                'count'    => 120.3,
                 'response' => HTTP_Download_Mobile_EZget::RESPONSE_UNKNOWN,
             ),
         );
@@ -103,6 +121,12 @@ class HTTP_Download_Mobile_EZgetTestCase extends PHPUnit_Framework_TestCase
                 'response' => file_get_contents(HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/picture.jpg', 0, null, 0, 120),
             ),
             array(
+                'filename' => HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/picture.jpg',
+                'offset'   => '0',
+                'count'    => '120',
+                'response' => file_get_contents(HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/picture.jpg', 0, null, 0, 120),
+            ),
+            array(
                 'filename' => 'dummy.jpg',
                 'offset'   => 0,
                 'count'    => 120,
@@ -139,12 +163,9 @@ class HTTP_Download_Mobile_EZgetTestCase extends PHPUnit_Framework_TestCase
         }
     }
 
-    public function _testBaseic()
+    public function testBaseic()
     {
         try {
-            $url = new Net_URL2('http://localhost/unittest/http_download_mobile_ezget/send.php');
-            $url->setQueryVariable('name' ,'picture.jpg');
-
             $filesize = filesize(HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/picture.jpg');
 
             $response = null;
@@ -165,27 +186,42 @@ class HTTP_Download_Mobile_EZgetTestCase extends PHPUnit_Framework_TestCase
 
                 echo sprintf('offset = %6d, count = %6d', $offset, $count).PHP_EOL;
 
-                $url->setQueryVariable('offset', $offset);
-                $url->setQueryVariable('count' , $count);
 
-                $request = new HTTP_Request2($url, HTTP_Request2::METHOD_GET);
-                $response = $request->send();
+                $_REQUEST['name']   = 'picture.jpg';
+                $_REQUEST['offset'] = (string)$offset;
+                $_REQUEST['count']  = (string)$count;
+                $response = $this->_server();
 
-                if (MIME_Type::stripParameters($response->getHeader('Content-type')) === 'text/x-hdml') {
+
+                if (MIME_Type::stripParameters($response['content-type']) === 'text/x-hdml') {
                     break;
                 } else {
-                    $this->assertEquals($count,
-                                        $response->getHeader('Content-length'));
+                    $len = strlen($response['body']);
+                    $this->assertEquals($count, $len);
 
-                    $offset += $response->getHeader('Content-length');
+                    $offset += $len;
                 }
             } while (++$step < 10000);
 
             $this->assertEquals('text/x-hdml',
-                                MIME_Type::stripParameters($response->getHeader('Content-type')));
+                                MIME_Type::stripParameters($response['content-type']));
 
         } catch (HTTP_Request2_Exception $e) {
             $this->fail($e->getMessage());
         }
+    }
+
+    private function _server()
+    {
+        require_once 'HTTP/Download.php';
+
+        $ezget = new HTTP_Download_Mobile_EZget();
+
+        $response = $ezget->setFilename(isset($_REQUEST['name']) ? HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/'.$_REQUEST['name'] : null)
+                          ->setOffset(isset($_REQUEST['offset']) ? $_REQUEST['offset'] : null)
+                          ->setCount(isset($_REQUEST['count']) ? $_REQUEST['count'] : null)
+                          ->getResponse();
+
+        return $response;
     }
 }

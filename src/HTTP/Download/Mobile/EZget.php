@@ -43,6 +43,9 @@ class HTTP_Download_Mobile_EZget
      */
     public function setOffset($offset)
     {
+        if (preg_match('/\d+/', $offset)) {
+            $offset = (int)$offset;
+        }
         $this->offset = $offset;
 
         return $this;
@@ -53,6 +56,9 @@ class HTTP_Download_Mobile_EZget
      */
     public function setCount($count)
     {
+        if (preg_match('/\d+/', $count)) {
+            $count = (int)$count;
+        }
         $this->count = $count;
 
         return $this;
@@ -115,20 +121,24 @@ class HTTP_Download_Mobile_EZget
      */
     public function getResponseType($offset, $count, $filename)
     {
-        if ($offset >= 0 && $count > 0) {
-            if (file_exists($filename)) {
-                $response_type = HTTP_Download_Mobile_EZget::RESPONSE_DOWNLOADING;
-            } else {
-                $response_type = HTTP_Download_Mobile_EZget::RESPONSE_FILENOTFOUND;
-            }
-        } elseif ($offset === 0 && $count === 0) {
-            $response_type = HTTP_Download_Mobile_EZget::RESPONSE_DOWNLOADEMPTY;
-        } elseif ($offset === -1 && $count === -1) {
-            $response_type = HTTP_Download_Mobile_EZget::RESPONSE_COMPLETED;
-        } elseif ($offset === -1 && $count === -2) {
-            $response_type = HTTP_Download_Mobile_EZget::RESPONSE_FAILED;
-        } else {
+        if (gettype($offset) !== 'integer' || gettype($count) !== 'integer') {
             $response_type = HTTP_Download_Mobile_EZget::RESPONSE_UNKNOWN;
+        } else {
+            if ($offset >= 0 && $count > 0) {
+                if (file_exists($filename)) {
+                    $response_type = HTTP_Download_Mobile_EZget::RESPONSE_DOWNLOADING;
+                } else {
+                    $response_type = HTTP_Download_Mobile_EZget::RESPONSE_FILENOTFOUND;
+                }
+            } elseif ($offset === 0 && $count === 0) {
+                $response_type = HTTP_Download_Mobile_EZget::RESPONSE_DOWNLOADEMPTY;
+            } elseif ($offset === -1 && $count === -1) {
+                $response_type = HTTP_Download_Mobile_EZget::RESPONSE_COMPLETED;
+            } elseif ($offset === -1 && $count === -2) {
+                $response_type = HTTP_Download_Mobile_EZget::RESPONSE_FAILED;
+            } else {
+                $response_type = HTTP_Download_Mobile_EZget::RESPONSE_UNKNOWN;
+            }
         }
 
         return $response_type;
