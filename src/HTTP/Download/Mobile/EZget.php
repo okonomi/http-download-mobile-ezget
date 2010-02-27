@@ -16,9 +16,7 @@ class HTTP_Download_Mobile_EZget
     const RESPONSE_FILENOTFOUND  = 5;
 
 
-    protected $path;
-
-    protected $name;
+    protected $filename;
 
     protected $offset;
 
@@ -33,19 +31,11 @@ class HTTP_Download_Mobile_EZget
     }
 
     /**
-     * 出力ァイルの親ディレクトリを設定
+     * 出力ファイルを設定
      */
-    public function setBasePath($path)
+    public function setFilename($filename)
     {
-        $this->path = $path;
-    }
-
-    /**
-     * nameパラメータを設定
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
+        $this->filename = $filename;
     }
 
     /**
@@ -73,12 +63,11 @@ class HTTP_Download_Mobile_EZget
         $response_body = '';
 
         // 出力の種類を判別
-        $response_type = $this->getResponseType($this->offset, $this->count, $this->path.'/'.$this->name);
+        $response_type = $this->getResponseType($this->offset, $this->count, $this->filename);
 
         if ($response_type == HTTP_Download_Mobile_EZget::RESPONSE_DOWNLOADING) {
             $body = '';
-            $filename = $this->path.'/'.$this->name;
-            if ($fp = fopen($filename, 'rb')) {
+            if ($fp = fopen($this->filename, 'rb')) {
                 fseek($fp, $this->offset);
                 $body = fread($fp, $this->count);
                 fclose($fp);
@@ -151,10 +140,9 @@ class HTTP_Download_Mobile_EZget
      */
     public function reset()
     {
-        $this->path   = '';
-        $this->name   = '';
-        $this->offset = 0;
-        $this->count  = 0;
+        $this->filename = '';
+        $this->offset   = 0;
+        $this->count    = 0;
 
         $this->messages = array(
             HTTP_Download_Mobile_EZget::RESPONSE_UNKNOWN       => 'エラーが発生しました',

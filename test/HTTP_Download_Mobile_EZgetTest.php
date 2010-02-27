@@ -82,8 +82,7 @@ class HTTP_Download_Mobile_EZgetTestCase extends PHPUnit_Framework_TestCase
     {
         $ezget = new HTTP_Download_Mobile_EZget();
 
-        $ezget->setBasePath(HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR);
-        $ezget->setName('picture.jpg');
+        $ezget->setFilename(HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/picture.jpg');
         $ezget->setOffset(0);
         $ezget->setCount(120);
         $response = $ezget->getResponse();
