@@ -121,11 +121,11 @@ class HTTP_Download_Mobile_EZget
             } else {
                 $response_type = HTTP_Download_Mobile_EZget::RESPONSE_FILENOTFOUND;
             }
-        } elseif ($offset == 0 && $count == 0) {
+        } elseif ($offset === 0 && $count === 0) {
             $response_type = HTTP_Download_Mobile_EZget::RESPONSE_DOWNLOADEMPTY;
-        } elseif ($offset == -1 && $count == -1) {
+        } elseif ($offset === -1 && $count === -1) {
             $response_type = HTTP_Download_Mobile_EZget::RESPONSE_COMPLETED;
-        } elseif ($offset == -1 && $count == -2) {
+        } elseif ($offset === -1 && $count === -2) {
             $response_type = HTTP_Download_Mobile_EZget::RESPONSE_FAILED;
         } else {
             $response_type = HTTP_Download_Mobile_EZget::RESPONSE_UNKNOWN;
