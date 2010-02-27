@@ -13,47 +13,60 @@ class HTTP_Download_Mobile_EZgetTestCase extends PHPUnit_Framework_TestCase
     {
         $ezget = new HTTP_Download_Mobile_EZget();
 
-        $offset   = 0;
-        $count    = 128;
-        $filename = HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/picture.jpg';
-        $actual   = $ezget->getResponseType($offset, $count, $filename);
-        $expect   = HTTP_Download_Mobile_EZget::RESPONSE_DOWNLOADING;
-        $this->assertEquals($actual, $expect);
-
-        $offset   = 0;
-        $count    = 128;
-        $filename = HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/dummy.jpg';
-        $actual   = $ezget->getResponseType($offset, $count, $filename);
-        $expect   = HTTP_Download_Mobile_EZget::RESPONSE_FILENOTFOUND;
-        $this->assertEquals($actual, $expect);
-
-        $offset   = 0;
-        $count    = 0;
-        $filename = HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/picture.jpg';
-        $actual   = $ezget->getResponseType($offset, $count, $filename);
-        $expect   = HTTP_Download_Mobile_EZget::RESPONSE_DOWNLOADEMPTY;
-        $this->assertEquals($actual, $expect);
-
-        $offset   = -1;
-        $count    = -1;
-        $filename = HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/picture.jpg';
-        $actual   = $ezget->getResponseType($offset, $count, $filename);
-        $expect   = HTTP_Download_Mobile_EZget::RESPONSE_COMPLETED;
-        $this->assertEquals($actual, $expect);
-
-        $offset   = -1;
-        $count    = -2;
-        $filename = HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/picture.jpg';
-        $actual   = $ezget->getResponseType($offset, $count, $filename);
-        $expect   = HTTP_Download_Mobile_EZget::RESPONSE_FAILED;
-        $this->assertEquals($actual, $expect);
-
-        $offset   = -2;
-        $count    = -2;
-        $filename = HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/picture.jpg';
-        $actual   = $ezget->getResponseType($offset, $count, $filename);
-        $expect   = HTTP_Download_Mobile_EZget::RESPONSE_UNKNOWN;
-        $this->assertEquals($actual, $expect);
+        $data = array(
+            array(
+                'filename' => HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/picture.jpg',
+                'offset'   => 0,
+                'count'    => 120,
+                'response' => HTTP_Download_Mobile_EZget::RESPONSE_DOWNLOADING,
+            ),
+            array(
+                'filename' => 'dummy.jpg',
+                'offset'   => 0,
+                'count'    => 120,
+                'response' => HTTP_Download_Mobile_EZget::RESPONSE_FILENOTFOUND,
+            ),
+            array(
+                'filename' => HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/picture.jpg',
+                'offset'   => 0,
+                'count'    => 0,
+                'response' => HTTP_Download_Mobile_EZget::RESPONSE_DOWNLOADEMPTY,
+            ),
+            array(
+                'filename' => HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/picture.jpg',
+                'offset'   => -1,
+                'count'    => -1,
+                'response' => HTTP_Download_Mobile_EZget::RESPONSE_COMPLETED,
+            ),
+            array(
+                'filename' => HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/picture.jpg',
+                'offset'   => -1,
+                'count'    => -2,
+                'response' => HTTP_Download_Mobile_EZget::RESPONSE_FAILED,
+            ),
+            array(
+                'filename' => HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/picture.jpg',
+                'offset'   => -2,
+                'count'    => -2,
+                'response' => HTTP_Download_Mobile_EZget::RESPONSE_UNKNOWN,
+            ),
+            array(
+                'filename' => HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/picture.jpg',
+                'offset'   => null,
+                'count'    => null,
+                'response' => HTTP_Download_Mobile_EZget::RESPONSE_UNKNOWN,
+            ),
+            array(
+                'filename' => HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/picture.jpg',
+                'offset'   => '0',
+                'count'    => '0',
+                'response' => HTTP_Download_Mobile_EZget::RESPONSE_UNKNOWN,
+            ),
+        );
+        foreach ($data as $value) {
+            $actual = $ezget->getResponseType($value['offset'], $value['count'], $value['filename']);
+            $this->assertEquals($value['response'], $actual);
+        }
     }
 
     public function testGetResponseMessage()
@@ -82,13 +95,48 @@ class HTTP_Download_Mobile_EZgetTestCase extends PHPUnit_Framework_TestCase
     {
         $ezget = new HTTP_Download_Mobile_EZget();
 
-        $response = $ezget->setFilename(HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/picture.jpg')
-                          ->setOffset(0)
-                          ->setCount(120)
-                          ->getResponse();
+        $data = array(
+            array(
+                'filename' => HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/picture.jpg',
+                'offset'   => 0,
+                'count'    => 120,
+                'response' => file_get_contents(HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/picture.jpg', 0, null, 0, 120),
+            ),
+            array(
+                'filename' => 'dummy.jpg',
+                'offset'   => 0,
+                'count'    => 120,
+                'response' => implode("\n", array(
+                                          '<hdml version=3.0 ttl="0" public=true>',
+                                          '<display>',
+                                          '<action type=accept task=cancel>',
+                                          '<wrap>'.mb_convert_encoding('ファイルが見つかりません', 'shift-jis', 'UTF-8').'</wrap>',
+                                          '</display>',
+                                          '</hdml>',
+                                      )),
+            ),
+            array(
+                'filename' => 'dummy.jpg',
+                'offset'   => null,
+                'count'    => null,
+                'response' => implode("\n", array(
+                                          '<hdml version=3.0 ttl="0" public=true>',
+                                          '<display>',
+                                          '<action type=accept task=cancel>',
+                                          '<wrap>'.mb_convert_encoding('エラーが発生しました', 'shift-jis', 'UTF-8').'</wrap>',
+                                          '</display>',
+                                          '</hdml>',
+                                      )),
+            ),
+        );
+        foreach ($data as $value) {
+            $response = $ezget->setFilename($value['filename'])
+                              ->setOffset($value['offset'])
+                              ->setCount($value['count'])
+                              ->getResponse();
 
-        $buf = file_get_contents(HTTP_DOWNLOAD_MOBILE_EZGET_DATA_DIR.'/'.'picture.jpg', 0, null, 0, 120);
-        $this->assertEquals($buf, $response['body']);
+            $this->assertEquals($value['response'], $response['body']);
+        }
     }
 
     public function _testBaseic()

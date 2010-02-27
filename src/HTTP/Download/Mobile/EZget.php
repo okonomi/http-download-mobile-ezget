@@ -95,7 +95,7 @@ class HTTP_Download_Mobile_EZget
                             '<action type=accept task=%s>'."\n".
                             '<wrap>%s</wrap>'."\n".
                             '</display>'."\n".
-                            '</hdml>'."\n",
+                            '</hdml>',
                             $task, $msg);
             $body = mb_convert_encoding($body, 'SJIS', 'UTF-8');
 
